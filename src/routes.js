@@ -39,7 +39,7 @@ function getFlightsPosition(req, res, next) {
   getData()
     .then(data => {
       const filteredFlights = _.filter(data.flights, callsignFilter);
-      debug(filteredFlights);
+      //debug(filteredFlights);
       return Object.assign({}, data, {flights: filteredFlights});
     })
     .then(data => {
@@ -47,6 +47,8 @@ function getFlightsPosition(req, res, next) {
         const fr24Flight = _.find(data.flights, {callsign});
         return Object.assign({}, {callsign}, emptyLocation, fr24Flight);
       });
+
+      debug(flights);
 
       return Object.assign({}, data, {flights});
     })

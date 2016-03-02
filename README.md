@@ -11,7 +11,7 @@ BOTTOM_RIGHT_LONG=xxx
 ## API
 
 ```
-/?callsigns=AZA11Y,AFR2015
+/?callsigns[]=AZA11Y&callsigns[]=AFR2015
 ```
 
 Returns :
