@@ -52,7 +52,8 @@ function getFlightsPosition(req, res, next) {
 
       return Object.assign({}, data, {flights});
     })
-    .then(data => res.send(data));
+    .then(data => res.send(data))
+    .catch(next);
 
 }
 
