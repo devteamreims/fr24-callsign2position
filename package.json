@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "babel-node": "babel-node server.js",
-    "dev": "DEBUG=fr24.* npm run start",
+    "dev": "DEBUG=fr24.* CACHE_MAX_AGE=60 npm run start",
     "start": "nodemon --exec npm run babel-node",
     "test": "NODE_ENV=test mocha --compilers js:babel-register --recursive"
   },
