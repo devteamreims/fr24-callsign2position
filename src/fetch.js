@@ -36,10 +36,16 @@ function fetch() {
     long: parseFloat(process.env.BOTTOM_RIGHT_LONG)
   };
 
-  debug('Refreshing data from FR24');
+  const url = urlMaker(topLeft, bottomRight);
 
-  return request(urlMaker(topLeft, bottomRight))
-    .then(processData);
+  debug(`Refreshing data from FR24 : ${url}`);
+
+  return request(url)
+    .then(processData)
+    .catch(err => {
+      debug(err);
+      return Promise.reject(err);
+    });
 }
 
 const processFlight = (flight) => {
@@ -61,17 +67,23 @@ function processData(rawData) {
     .uniqBy(f => f.callsign)
     .value();
 
+  debug('Data retrieved from FR24 : %d flights', localData.flights.length);
   return localData;
 }
 
 
 
 export function getData() {
-  const cacheMaxAge = process.env.CACHE_MAX_AGE || 60*3;
+  const cacheMaxAge = parseInt(process.env.CACHE_MAX_AGE) || 60*3;
   const cacheExpired = (lastFetched) => Date.now() > (lastFetched + cacheMaxAge);
+
+  debug(`Last fetched: ${localData.lastFetched} / Last fetched + cache : ${localData.lastFetched + cacheMaxAge} / Now: ${Date.now()}`);
+
   if(_.isEmpty(localData.flights) || cacheExpired(localData.lastFetched)) {
+    debug('Cache expired, fetching fresh data');
     return fetch();
   }
 
+  debug('Hitting local cache');
   return Promise.resolve(localData);
 }
