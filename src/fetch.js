@@ -48,12 +48,13 @@ function fetch() {
     });
 }
 
-const processFlight = (flight) => {
+const processFlight = lastFetched => (flight) => {
   return {
     callsign: flight[16],
     lat: flight[1],
     long: flight[2],
-    alt: flight[4]
+    alt: flight[4],
+    when: lastFetched,
   };
 }
 
@@ -63,7 +64,7 @@ function processData(rawData) {
   const flights = _.omit(rawData, ['full_count', 'version']);
 
   localData.flights = _(flights)
-    .map(processFlight)
+    .map(processFlight(localData.lastFetched))
     .uniqBy(f => f.callsign)
     .value();
 
@@ -74,7 +75,7 @@ function processData(rawData) {
 
 
 export function getData() {
-  const cacheMaxAge = parseInt(process.env.CACHE_MAX_AGE) || 60*3;
+  const cacheMaxAge = parseInt(process.env.CACHE_MAX_AGE) || 1000*60;
   const cacheExpired = (lastFetched) => Date.now() > (lastFetched + cacheMaxAge);
 
   debug(`Last fetched: ${localData.lastFetched} / Last fetched + cache : ${localData.lastFetched + cacheMaxAge} / Now: ${Date.now()}`);

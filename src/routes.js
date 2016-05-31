@@ -33,24 +33,25 @@ function getFlightsPosition(req, res, next) {
   const emptyLocation = {
     lat: 0,
     long: 0,
-    alt: 0
+    alt: 0,
+    when: Date.now(),
   };
 
   getData()
     .then(data => {
-      const filteredFlights = _.filter(data.flights, callsignFilter);
+      const filteredFlights = _.filter(data.flights, callsignFilter) || [];
       //debug(filteredFlights);
-      return Object.assign({}, data, {flights: filteredFlights});
+      return filteredFlights;
     })
     .then(data => {
       const flights = _.map(callsigns, callsign => {
-        const fr24Flight = _.find(data.flights, {callsign});
+        const fr24Flight = _.find(data, {callsign});
         return Object.assign({}, {callsign}, emptyLocation, fr24Flight);
       });
 
       debug(flights);
 
-      return Object.assign({}, data, {flights});
+      return flights;
     })
     .then(data => res.send(data))
     .catch(next);
